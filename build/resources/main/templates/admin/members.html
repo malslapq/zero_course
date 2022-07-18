@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"
+            integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+            crossorigin="anonymous"></script>
+    <meta charset="UTF-8">
+    <title>관리자 회원 관리</title>
+    <style>
+        .list table {
+            width: 100%;
+            border-collapse: collapse;
+            border-color: black;
+        }
+
+        .list table th, td {
+            border: solid 1px #000;
+        }
+
+        .searchForm {
+            padding-top: 20px;
+            padding-bottom: 20px;
+            text-align: center;
+        }
+
+        .pageForm {
+            padding-top: 20px;
+            text-align: center;
+        }
+    </style>
+    <script>
+        $(function () {
+            $('.movePage').on('click', function () {
+                let page = $(this).val();
+                let searchType = $('select[name=searchType]').val();
+                let searchValue = $('input[name=searchValue]').val();
+                let size = $('select[name=size]').val();
+                window.location = "/admin/members?searchType=" + searchType +
+                    "&searchValue=" + searchValue +
+                    "&page=" + page +
+                    "&size=" + size;
+            });
+
+        });
+    </script>
+</head>
+<body>
+
+<h2>관리자 회원 관리</h2>
+
+<div th:replace="/fragments/admin_layout.html :: admin-fragment-body-menu">
+</div>
+
+<div class="searchForm">
+    <form action="/admin/members" method="get">
+        <select name="searchType">
+            <option value="all">전체</option>
+            <option th:selected="${#strings.equals(param.searchType, 'userId')}"
+                    value="userId">
+                이메일
+            </option>
+            <option th:selected="${#strings.equals(param.searchType, 'userName')}"
+                    value="userName">
+                이름
+            </option>
+            <option th:selected="${#strings.equals(param.searchType, 'phone')}" value="phone">
+                연락처
+            </option>
+        </select>
+        <input th:value="${param.searchValue}" type="search" name="searchValue"
+               placeholder="검색입력"/>
+        <button type="submit">검색</button>
+        <select name="size">
+            <option th:selected="${#strings.equals(param.size, '10')}" value="10">10
+            </option>
+            <option th:selected="${#strings.equals(param.size, '30')}" value="30">30</option>
+            <option th:selected="${#strings.equals(param.size, '50')}" value="50">50</option>
+        </select>
+        <label>개씩 보기</label>
+    </form>
+
+</div>
+
+<div class="list">
+    <table>
+        <thead>
+        <tr>
+            <th>
+                순번
+            </th>
+            <th>
+                이메일
+            </th>
+            <th>
+                이름
+            </th>
+            <th>
+                연락처
+            </th>
+            <th>
+                인증 여부
+            </th>
+            <th>
+                가입일
+            </th>
+            <th>
+                권한
+            </th>
+            <th>
+                마지막 로그인
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="member : ${members}">
+            <td th:text="${endNo} - ${memberStat.index}"></td>
+            <td>
+            <a th:text="${member.userId}"
+               th:href="${'/admin/member/detail.do?userId=' + member.userId}"></a>
+            </td>
+            <td th:text="${member.userName}"></td>
+            <td th:text="${member.phone}"></td>
+            <td th:text="${member.emailAuth == true ? 'Y' : 'N'}"></td>
+            <td th:text="${member.regDate}"></td>
+            <td th:text="${member.userRole}"></td>
+            <td th:text="${member.lastLoginDate}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="pageForm" th:if="${totalPage != 0}">
+        <label th:each="page : ${#numbers.sequence(1, totalPage)}">
+            <button class="movePage" type="button" th:value="${page}"
+                    th:text="${page}"></button>
+        </label>
+    </div>
+
+</div>
+
+
+</body>
+</html>

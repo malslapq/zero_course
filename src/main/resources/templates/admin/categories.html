@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"
+            integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+            crossorigin="anonymous"></script>
+    <meta charset="UTF-8">
+    <title>관리자 카테고리 관리</title>
+    <style>
+        .list {
+            padding-top: 20px;
+        }
+        .list table {
+            width: 100%;
+            border-collapse: collapse;
+            border-color: black;
+        }
+
+        .list table th, td {
+            border: solid 1px #000;
+        }
+        p.nothing{
+            text-align: center;
+            padding: 100px;
+        }
+    </style>
+    <script>
+
+        function deleteCategory(id) {
+            let form = document.createElement('form');
+            form.setAttribute('method', 'post');
+            form.setAttribute('action', "/admin/category/"+id);
+            document.charset = "utf-8";
+            let hiddenField = document.createElement('input');
+            hiddenField.setAttribute('type', 'hidden');
+            hiddenField.setAttribute('name', "id");
+            hiddenField.setAttribute('value', id);
+            form.appendChild(hiddenField);
+            document.body.appendChild(form);
+            form.submit();
+        }
+        $(function () {
+
+            $('button.updateBtn').on('click', function () {
+                let $this = $(this);
+                let $tr = $this.closest('tr');
+                let id = $tr.find("input[name=id]").val();
+                let categoryName = $tr.find("input[name=categoryName]").val();
+                let sortValue = $tr.find("input[name=sortValue]").val();
+                let categoryStatus = $tr.find("input[name=categoryStatus]").is(':checked');
+                categoryStatus = categoryStatus ? "USE" : "CAN_NOT_USE";
+
+                $form = $('form[name=updateForm]');
+                $form.find('input[name=id]').val(id);
+                $form.find('input[name=categoryName]').val(categoryName);
+                $form.find('input[name=sortValue]').val(sortValue);
+                $form.find('input[name=categoryStatus]').val(categoryStatus);
+
+                $form.submit();
+            });
+
+        })
+
+    </script>
+</head>
+<body>
+
+<h2>관리자 회원 관리</h2>
+
+<div th:replace="/fragments/admin_layout.html :: admin-fragment-body-menu">
+</div>
+
+<div class="list">
+    <div>
+        <form action="/admin/category/add.do" method="post">
+            <input type="text" name="categoryName" required placeholder="카테고리명">
+            <button type="submit">추가</button>
+        </form>
+    </div>
+    <table>
+        <thead>
+        <tr>
+            <th>
+                ID
+            </th>
+            <th>
+                카테고리명
+            </th>
+            <th>
+                순서
+            </th>
+            <th>
+                사용여부
+            </th>
+            <th>
+                비고
+            </th>
+        </thead>
+        <tbody>
+        <tr th:each="category : ${categories}">
+            <td>
+                <input th:value="${category.id}" type="hidden" name="id">
+                <label th:text="${category.id}"></label>
+            </td>
+            <td>
+               <input th:value="${category.categoryName}" type="text" name="categoryName"/>
+            </td>
+            <td>
+                <input th:value="${category.sortValue}" type="text" name="sortValue"/>
+            </td>
+            <td>
+                <input th:checked="${category.categoryStatus.toString().equals('USE')}"
+                       type="checkbox"
+                       th:name="categoryStatus" value="USE">
+                사용
+            </td>
+            <td>
+                <button type="button" class="updateBtn">수정</button>
+                 <button th:onclick="'deleteCategory('+${category.id}+')'" type="button">삭제
+                 </button>
+            </td>
+
+        </tr>
+        <tr>
+            <td th:if="${categories.size == 0}" colspan="5">
+                <p class="nothing">카테고리가 없습니다.</p>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<form name="updateForm" action="/admin/category/update.do" method="post">
+    <input type="hidden" name="id">
+    <input type="hidden" name="categoryName">
+    <input type="hidden" name="sortValue">
+    <input type="hidden" name="categoryStatus">
+</form>
+
+</body>
+</html>

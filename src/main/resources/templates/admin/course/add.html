@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"
+            integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+            crossorigin="anonymous"></script>
+    <meta charset="UTF-8">
+    <title>관리자 강좌 등록</title>
+    <style>
+        .detail {
+            padding-top: 20px;
+        }
+        .detail table {
+            width: 100%;
+            border-collapse: collapse;
+            border-color: black;
+        }
+        .detail table th, td {
+            border: solid 1px #000;
+        }
+        .buttons {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .buttons a, .buttons button{
+            border-width: 0;
+            background-color: transparent;
+            text-decoration: underline;
+            font-size: 15px;
+            line-height: 20px;
+            height: 20px;
+            color: black;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<h2>강좌 관리 - 강좌 등록</h2>
+
+<div th:replace="/fragments/admin_layout.html :: admin-fragment-body-menu">
+</div>
+
+<div class="detail">
+    <form method="post">
+    <table>
+        <tbody>
+            <tr>
+                <th>
+                    강좌 카테고리
+                <td>
+                    <select name="categoryId" required>
+                        <option value="">카테고리 선택</option>
+                        <option th:selected="${course.categoryId == category.id}"
+                                th:each="category : ${categories}"
+                                th:value="${category.id}"
+                                th:text="${category.categoryName}">
+                        </option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    강좌명 :
+                </th>
+                <td>
+                    <input th:value="${course.subject}" type="text" name="subject" required
+                           placeholder="강좌명 입력"/>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    키워드 :
+                </th>
+                <td>
+                    <input th:value="${course.keyword}" type="text" name="keyword" required
+                           placeholder="키워드 입력"/>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    요약 :
+                </th>
+                <td>
+                    <textarea th:text="${course.summary}" name="summary" required
+                              placeholder="요약 입력"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    내용
+                </th>
+                <td>
+                    <textarea th:text="${course.contents}" name="contents" required
+                              placeholder="내용 입력"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    가격 :
+                </th>
+                <td>
+                    <input th:value="${course.price}" type="text" name="price" required
+                              placeholder="가격 입력"/>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    할인 가격 :
+                </th>
+                <td>
+                    <input th:value="${course.salePrice}" type="text" name="salePrice" required
+                           placeholder="할인 가격 입력"/>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    할인 기간 :
+                </th>
+                <td>
+                    <input th:value="${course.saleEndDate}" type="date" name="saleEndDate"
+                           required
+                           placeholder="할인 기간 입력"/>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <div class="buttons">
+        <button th:if="${mode}" type="submit">강좌 수정</button>
+        <button th:if="${!mode}" type="submit">강좌 등록</button>
+        <a href="/admin/courses">목록으로 이동</a>
+    </div>
+    </form>
+</div>
+
+</body>
+</html>

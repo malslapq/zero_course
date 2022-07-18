@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>관리자 회원 관리</title>
+    <style>
+        .detail {
+            padding-top: 20px;
+        }
+        .detail table {
+            width: 80%;
+            border-collapse: collapse;
+            border-color: black;
+        }
+
+        .detail table th, td {
+            border: solid 1px #000;
+        }
+    </style>
+</head>
+<body>
+
+<h2>관리자 회원 관리 - 회원 상세 정보</h2>
+
+<div th:replace="/fragments/admin_layout.html :: admin-fragment-body-menu">
+</div>
+
+<div class="detail">
+    <table>
+        <tbody>
+        <tr>
+            <th>아이디</th>
+            <td>
+                <p th:text="${member.userId}"></p>
+            </td>
+        </tr>
+        <tr>
+            <th>이름</th>
+            <td>
+                <p th:text="${member.userName}"></p>
+            </td>
+        </tr>
+        <tr>
+            <th>연락처</th>
+            <td>
+                <p th:text="${member.phone}"></p>
+            </td>
+        </tr>
+        <tr>
+            <th>가입일</th>
+            <td>
+                <p th:text="${member.regDate}"></p>
+            </td>
+        </tr>
+        <tr>
+            <th>이메일인증</th>
+            <td>
+                <p th:text="${member.emailAuth}"></p>
+            </td>
+        </tr>
+        <tr>
+            <th>권한</th>
+            <td>
+                <p th:text="${member.userRole}"></p>
+            </td>
+        </tr>
+        <tr>
+            <th>상태</th>
+            <td>
+                <p>
+                    현재 상태 : <span th:text="${member.userStatus}"></span>
+                </p>
+                <form action="/admin/member/status.do" method="post">
+                    <input th:value="${member.userId}" type="hidden" name="userId" >
+                    <select name="userStatus">
+                        <option value="USING">USING(사용중)</option>
+                        <option value="WAITING_JOIN">WAITING_JOIN(가입승인중)</option>
+                        <option value="CAN_NOT_USE">CAN_NOT_USE(정지)</option>
+                    </select>
+                    <button type="submit">변경</button>
+                </form>
+            </td>
+        </tr>
+        <tr>
+            <th>비밀번호 초기화</th>
+            <td>
+                <div>
+                    <form action="/admin/member/reset/password" method="post">
+                        <input th:value="${member.userId}" type="hidden" name="userId">
+                        <input th:value="${member.userName}" type="hidden" name="userName">
+                        <button type="submit">비밀번호 초기화 메일 전송</button>
+                    </form>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div>
+        <a href="/admin/members">목록으로 돌아가기</a>
+    </div>
+</div>
+
+<div class="detail">
+    <table>
+        <thead>
+        <tr>
+            <th>
+                No
+            </th>
+            <th>
+                로그인 일자
+            </th>
+            <th>
+                접속 IP
+            </th>
+            <th>
+                접속 UserAgent
+            </th>
+        </tr>
+        </thead>
+        <tr th:each="history : ${histories}">
+            <td th:text="${history.id}"></td>
+            <td th:text="${history.loginDate}"></td>
+            <td th:text="${history.loginIp}"></td>
+            <td th:text="${history.agent}"></td>
+        </tr>
+    </table>
+</div>
+
+</body>
+</html>
